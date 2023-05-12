@@ -14,7 +14,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.dongjin.board.board.dto.PostDTO;
+import com.dongjin.board.board.dto.RelatedPostDTO;
 import com.dongjin.board.board.entity.Post;
+import com.dongjin.board.board.entity.RelatedPost;
 import com.dongjin.board.board.paging.SelectCriteria;
 import com.dongjin.board.board.repository.BoardRelatedPostRepository;
 import com.dongjin.board.board.repository.BoardRepository;
@@ -101,7 +103,19 @@ public class BoardService {
 	/* 새로운 게시물 등록 */
 	@Transactional
 	public void registNewPost(PostDTO newPost) {
+		log.info("[BoardService] registNewPost Start =========== " );
+
+		log.info("[BoardService] registNewPost 저장되는 데이터 확인(newPost) : " + newPost);
+
+		log.info("[BoardService] registNewPost End =========== " );
 
 		boardRepository.save(modelMapper.map(newPost, Post.class)); 
+	}
+	
+	/* 새로운 게시물 연관성 등록 */
+	@Transactional
+	public void registNewRelatedPost(RelatedPostDTO newRelatedPost) {
+
+	boardRelatedPostRepository.save(modelMapper.map(newRelatedPost, RelatedPost.class)); 
 	}
 }

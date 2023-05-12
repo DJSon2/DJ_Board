@@ -8,11 +8,18 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity(name="Board")
-@Table(name = "TBL_QNA_BOARD")
+@Table(name = "BOARD_RELATED_POST")
+@SequenceGenerator( /// 식별자, 시퀀스전략
+        name = "RELATED_POST_SEQ_GENERATOR",
+        sequenceName = "SEQ_RELATED_POST_ID",
+        initialValue = 1,
+        allocationSize = 1
+)
 public class RelatedPost {
 
 	@Id

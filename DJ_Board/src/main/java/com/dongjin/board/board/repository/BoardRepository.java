@@ -12,4 +12,5 @@ public interface BoardRepository extends JpaRepository<Post, Integer>{
 	int countByTitleContaining(String searchValue);
 
 	List<Post> findByTitleContaining(String searchValue, Pageable paging);
+	
 }
