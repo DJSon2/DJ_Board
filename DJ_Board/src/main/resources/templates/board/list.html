@@ -6,10 +6,7 @@
 		const successMessage = "[[${ registSuccessMessage }]]";
 		successMessage && alert(successMessage);;
 	</script>
-	
-<!--	<div align="right"><button class="btn" onclick="location.href='/board/regist'">글쓰기</button></div>
-		<br>-->
-	
+		<button onclick="location.href='/board/regist'">새로운 게시글 작성하기</button>
 			<div th:each="board : ${ postList }">
 				<hr width= "800px">
 				<div><a class="item1" th:href="'/board/'+${ board.postId }" th:text="${ board.title }"></a></div>
@@ -17,23 +14,9 @@
 				<div>
 					<span class="item3" th:text="${ board.title }"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					<span class="item4" th:text="${ board.createdAT }" ></span>&nbsp;&nbsp;&nbsp;&nbsp;
-<!--					<span class="item4"><span class="item4">최종수정일&nbsp;</span></span><span class="item4">(&nbsp;</span><span class="item4" th:text="${ board.modifiedDate }" ></span><span class="item4">&nbsp;)</span>
--->				<hr width= "800px">
+				<hr width= "800px">
+					</div>
 				</div>
-
-	</div>
-  	 	<!--<div th:replace="board/paging.html"></div>-->
-
-	<!-- 검색 폼 -->
-	<!--<div align="center">
-		<form class="search" id="loginForm" action="/board/search" method="get" >
-				<select th:with="searchCondition = ${selectCriteria?.searchCondition}" id="searchCondition" class="searchCondition" name="searchCondition">
-					<option value="boardTitle" th:selected="${ searchCondition } == 'boardTitle'">제목</option>
-				</select> 
-			<input type="hidden" name="currentPage" value="1">
-			&nbsp;<input type="search" class="searchCondition2" id="name" name="searchValue" th:value="${selectCriteria?.searchValue}">
-			&nbsp;<button class="btn" type="submit">검색하기</button>
-		</form>-->
-		
-	</div>
+			</div>
+			<button onclick="location.href='/main'">메인으로 돌아가기</button>
 </body>

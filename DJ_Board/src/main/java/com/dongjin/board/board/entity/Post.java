@@ -20,7 +20,7 @@ import jakarta.persistence.Table;
 @Table(name = "BOARD_POST")
 @SequenceGenerator( /// 식별자, 시퀀스전략
         name = "POST_SEQ_GENERATOR",
-        sequenceName = "SEQ_BOARD_POST",
+        sequenceName = "SEQ_POST_ID",
         initialValue = 1,
         allocationSize = 1
 )
@@ -40,8 +40,8 @@ public class Post {
 	@Column(name = "TITLE")
 	private String title;
 	
-	@Column(name = "AUTHOR_ID")
-	private int authorId;
+	@Column(name = "AUTHOR_NAME")
+	private String authorName;
 	
 	@Column(name = "CREATED_AT")
 	private java.sql.Date createdAT;
@@ -50,18 +50,18 @@ public class Post {
 		super();
 	}
 
-	public Post(int postId, String content, String title, int authorId, Date createdAT) {
+	public Post(int postId, String content, String title, String authorName, Date createdAT) {
 		super();
 		this.postId = postId;
 		this.content = content;
 		this.title = title;
-		this.authorId = authorId;
+		this.authorName = authorName;
 		this.createdAT = createdAT;
 	}
 
 	@Override
 	public String toString() {
-		return "Post [postId=" + postId + ", content=" + content + ", title=" + title + ", authorId=" + authorId
+		return "Post [postId=" + postId + ", content=" + content + ", title=" + title + ", authorName=" + authorName
 				+ ", createdAT=" + createdAT + "]";
 	}
 
@@ -89,12 +89,12 @@ public class Post {
 		this.title = title;
 	}
 
-	public int getAuthorId() {
-		return authorId;
+	public String getAuthorName() {
+		return authorName;
 	}
 
-	public void setAuthorId(int authorId) {
-		this.authorId = authorId;
+	public void setAuthorName(String authorName) {
+		this.authorName = authorName;
 	}
 
 	public java.sql.Date getCreatedAT() {
@@ -105,6 +105,7 @@ public class Post {
 		this.createdAT = createdAT;
 	}
 
+	
 	
 
 }

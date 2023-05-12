@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.dongjin.board.board.dto.PostDTO;
 import com.dongjin.board.board.entity.Post;
 import com.dongjin.board.board.paging.SelectCriteria;
+import com.dongjin.board.board.repository.BoardRelatedPostRepository;
 import com.dongjin.board.board.repository.BoardRepository;
 
 import jakarta.transaction.Transactional;
@@ -26,11 +27,13 @@ public class BoardService {
 	private static final Logger log = LoggerFactory.getLogger(BoardService.class);
 	private final ModelMapper modelMapper;
 	private final BoardRepository boardRepository;
+	private final BoardRelatedPostRepository boardRelatedPostRepository;
 	
 	@Autowired
-	public BoardService(BoardRepository boardRepository, ModelMapper modelMapper) {
+	public BoardService(BoardRepository boardRepository, ModelMapper modelMapper, BoardRelatedPostRepository boardRelatedPostRepository) {
 		this.modelMapper = modelMapper;
 		this.boardRepository = boardRepository;
+		this.boardRelatedPostRepository = boardRelatedPostRepository;
 	}
 	
 	/* 게시글 전체 조회 */
@@ -93,5 +96,12 @@ public class BoardService {
 
 		log.info("[BoardService] findPostById End ==================");
 		return modelMapper.map(post, PostDTO.class);
+	}
+	
+	/* 새로운 게시물 등록 */
+	@Transactional
+	public void registNewPost(PostDTO newPost) {
+
+		boardRepository.save(modelMapper.map(newPost, Post.class)); 
 	}
 }

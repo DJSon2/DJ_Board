@@ -1,5 +1,6 @@
 package com.dongjin.board.board.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -8,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.dongjin.board.board.dto.PostDTO;
 import com.dongjin.board.board.paging.Pagenation;
@@ -91,6 +94,23 @@ public class BoardController {
 		log.info("[BoardController] boardDetail test : " + post);
 		
 		log.info("[BoardController] boardDetail End ==================");
+		return mv;
+	}
+	
+	/* 새 게시물 작성 */
+	@GetMapping("/regist")
+	public void registPage() {
+	}
+	
+	@PostMapping("/regist")
+	public ModelAndView registPost(ModelAndView mv, PostDTO newPost, RedirectAttributes rttr) {
+		
+		java.util.Date now = new java.util.Date(); // 현재 시간 구하기
+		java.sql.Date sqlDate = new java.sql.Date(now.getTime()); // java.util.Date를 java.sql.Date로 변환
+		newPost.setCreatedAT(sqlDate); // 현재 시간 저장
+		boardService.registNewPost(newPost);
+		rttr.addFlashAttribute("registSuccessMessage", "글 작성 완료");
+		mv.setViewName("redirect:/board/list");
 		return mv;
 	}
 }

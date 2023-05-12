@@ -3,13 +3,14 @@ package com.dongjin.board.board.dto;
 import java.sql.Clob;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public class PostDTO {
 
 	private int postId;
 	private String title;
 	private String content;
-	private int authorId;
+	private String authorName;
 	private java.sql.Date createdAT;
 
 	
@@ -17,19 +18,19 @@ public class PostDTO {
 	}
 
 
-	public PostDTO(int postId, String title, String content, int authorId, Date createdAT) {
+	public PostDTO(int postId, String title, String content, String authorName, Date createdAT) {
 		super();
 		this.postId = postId;
 		this.title = title;
 		this.content = content;
-		this.authorId = authorId;
+		this.authorName = authorName;
 		this.createdAT = createdAT;
 	}
 
 
 	@Override
 	public String toString() {
-		return "PostDTO [postId=" + postId + ", title=" + title + ", content=" + content + ", authorId=" + authorId
+		return "PostDTO [postId=" + postId + ", title=" + title + ", content=" + content + ", authorName=" + authorName
 				+ ", createdAT=" + createdAT + "]";
 	}
 
@@ -64,13 +65,13 @@ public class PostDTO {
 	}
 
 
-	public int getAuthorId() {
-		return authorId;
+	public String getAuthorName() {
+		return authorName;
 	}
 
 
-	public void setAuthorId(int authorId) {
-		this.authorId = authorId;
+	public void setAuthorName(String authorName) {
+		this.authorName = authorName;
 	}
 
 
@@ -82,6 +83,8 @@ public class PostDTO {
 	public void setCreatedAT(java.sql.Date createdAT) {
 		this.createdAT = createdAT;
 	}
+
+
 
 
 	
