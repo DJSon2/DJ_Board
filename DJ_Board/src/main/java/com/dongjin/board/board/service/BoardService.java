@@ -18,9 +18,12 @@ import org.springframework.stereotype.Service;
 
 import com.dongjin.board.board.dto.PostDTO;
 import com.dongjin.board.board.dto.RelatedPostDTO;
+import com.dongjin.board.board.dto.RelatedPostFrequencyDTO;
 import com.dongjin.board.board.entity.Post;
 import com.dongjin.board.board.entity.RelatedPost;
+import com.dongjin.board.board.entity.RelatedPostFrequency;
 import com.dongjin.board.board.paging.SelectCriteria;
+import com.dongjin.board.board.repository.BoardRelatedPostFrequencyRepository;
 import com.dongjin.board.board.repository.BoardRelatedPostRepository;
 import com.dongjin.board.board.repository.BoardRepository;
 
@@ -33,13 +36,15 @@ public class BoardService {
 	private final ModelMapper modelMapper;
 	private final BoardRepository boardRepository;
 	private final BoardRelatedPostRepository boardRelatedPostRepository;
+	private final BoardRelatedPostFrequencyRepository boardRelatedPostFrequencyRepository;
 
 	@Autowired
 	public BoardService(BoardRepository boardRepository, ModelMapper modelMapper,
-			BoardRelatedPostRepository boardRelatedPostRepository) {
+			BoardRelatedPostRepository boardRelatedPostRepository, BoardRelatedPostFrequencyRepository boardRelatedPostFrequencyRepository) {
 		this.modelMapper = modelMapper;
 		this.boardRepository = boardRepository;
 		this.boardRelatedPostRepository = boardRelatedPostRepository;
+		this.boardRelatedPostFrequencyRepository = boardRelatedPostFrequencyRepository;
 	}
 
 	/* 게시글 전체 조회 */
@@ -107,7 +112,7 @@ public class BoardService {
 	}
 
 	@Transactional
-	public void registNewPost(PostDTO newPost, RelatedPostDTO newRelatedPost) {
+	public void registNewPost(PostDTO newPost, RelatedPostDTO newRelatedPost, RelatedPostFrequencyDTO newRelatedPostFrequency) {
 		log.info("[BoardService] registNewPost Start ==================");
 		
 		/* 게시물 DB를 위한 저장 */
@@ -123,7 +128,7 @@ public class BoardService {
 	    /* 연관 게시물 테이블 저장 */
 	    Integer postId = post.getPostId(); // 새로 생성된 게시물의 postId 값 가져오기
 		
-		log.info("[BoardService] registNewPost postId 확인ㅇ : " + postId);
+		log.info("[BoardService] registNewPost postId 확인 : " + postId);
 
 	    
 	    String[] words = post.getContent().split("\\s+");
@@ -145,42 +150,53 @@ public class BoardService {
 
 	    List<String> frequentWords = new ArrayList<>();
 	    for (Map.Entry<String, Integer> entry : wordCounts.entrySet()) {
+	    	String word = entry.getKey();
+	        int count = entry.getValue();
+	    	
+	        log.info("[BoardService] registNewPost 새로 등록되는 단어 확인 : " + word);
+
+//	        log.info("[BoardService] registNewPost frequentWords : " + frequentWords);
 	        
-	    	double frequency = (double) entry.getValue() / (double) totalCount;
-	    	
-	    	
-	        frequentWords.add(entry.getKey());
+	        double frequency = (double) count / (double) totalCount;
+	        
 	        log.info("[BoardService] registNewPost frequency : " + frequency);
 	       
-	        log.info("[BoardService] registNewPost frequentWords : " + frequentWords);
 
+	        // 빈도 수 60% 이하 단어만 포함
 	        if (frequency < 0.6) {
 	        	
 	        	// 등록하려는 단어가 이전에 등록되었는지 검색
 	        	// List<String>을 String 형으로 변경
-	        	String WordsString = String.join(",", frequentWords);
+//	        	String WordsString = String.join(",", frequentWords);
 	           
-    	        log.info("[BoardService] registNewPost 이전에 존재하던 RelatedId 확인 : " + WordsString);
+    	        log.info("[BoardService] registNewPost word 확인 : " + word);
   	
-	        	RelatedPost existingRelatedPost = boardRelatedPostRepository.findByWord(WordsString);
-	           
+    	        // 중복 확인용
+	        	RelatedPost existingRelatedPost = boardRelatedPostRepository.findByWord(word);
+    	        log.info("[BoardService] registNewPost existingRelatedPost 확인 : " + existingRelatedPost);
+
+
+    	        // 만약 이미 등록된 단어인 경우 if문 실행
 	            if (existingRelatedPost != null) {
 	            	
-	    	        log.info("[BoardService] registNewPost existingRelatedPost if 문 Start ========= ");
-
-	                // 등록된 단어가 있을 경우, 해당 단어의 PK값을 가져옴
-	                newRelatedPost.setRelatedPostId(existingRelatedPost.getRelatedPostId());
-	               
-	                int existingRelatedPost1 = existingRelatedPost.getRelatedPostId();
-	    	        log.info("[BoardService] registNewPost existingRelatedPost1 확인 : " + existingRelatedPost1);
-
-	                newRelatedPost.setWord(WordsString);
-	                newRelatedPost.setPostId(postId);
-	    	        newRelatedPost.setFrequency((int) frequency);
+	            	log.info("[BoardService] registNewPost existingRelatedPost if 문 Start ========= ");
+	            	
+	            	log.info("[BoardService] registNewPost 이전에 존재하던 단어 word 확인 : " + word);
 	    	        
-	    	        log.info("[BoardService] registNewPost 이전에 존재하던 단어(WordsString 확인 : " + WordsString);
-	    	        RelatedPost relatedPost = modelMapper.map(newRelatedPost, RelatedPost.class);
-	    	        boardRelatedPostRepository.save(relatedPost);
+	    	        // 이미 등록된 단어의 PK값
+	            	int existingRelatedPostId = existingRelatedPost.getRelatedPostId();
+	    	        log.info("[BoardService] registNewPost existingRelatedPostId 확인 : " + existingRelatedPostId);
+	                	    	       
+	    	        // 이미 등록되어 있는 단어의 경우이기 때문에 RelatedPost에 저장할 필요 없음
+	    	        newRelatedPostFrequency.setId(0); // 시퀀스에서 가져온 다음 값 설정
+	                newRelatedPostFrequency.setPostId(postId);
+	                newRelatedPostFrequency.setRelatedPostId(existingRelatedPostId);
+	                newRelatedPostFrequency.setFrequency(count);
+	    	        	    	       
+	    	        RelatedPostFrequency relatedPostFrequency = modelMapper.map(newRelatedPostFrequency, RelatedPostFrequency.class);
+	    	        boardRelatedPostFrequencyRepository.save(relatedPostFrequency);
+	    	        log.info("[BoardService] registNewPost 저장되는 데이터 확인 relatedPostFrequency : " + relatedPostFrequency);
+
 	    	        log.info("[BoardService] registNewPost existingRelatedPost if 문 End ========= ");
 
 	    	        
@@ -189,15 +205,32 @@ public class BoardService {
 	    	        log.info("[BoardService] registNewPost existingRelatedPost if 문 else Start ========= ");
 	            	
 	                // 등록된 단어가 없을 경우, 시퀀스에서 새로운 PK값을 가져옴       
-	    	        newRelatedPost.setRelatedPostId(0); // 시퀀스에서 가져온 다음 값 설정
-	    	        newRelatedPost.setWord(WordsString);
-	    	        newRelatedPost.setPostId(postId);
-	    	        newRelatedPost.setFrequency((int) frequency);
+
+	    	        log.info("[BoardService] registNewPost 새로 등록되는 단어 확인 : " + word);
 	    	        
-	    	        log.info("[BoardService] registNewPost 새로 등록되는 단어 확인 : " + WordsString);
+	    	        // 새로운 단어 등록
+	    	        newRelatedPost.setRelatedPostId(0); // 시퀀스에서 가져온 다음 값 설정
+	    	        newRelatedPost.setWord(word);
 	    	        RelatedPost relatedPost = modelMapper.map(newRelatedPost, RelatedPost.class);
 	    	        boardRelatedPostRepository.save(relatedPost);
+
+	    	        log.info("[BoardService] registNewPost 저장되는 relatedPost 확인 : " + relatedPost);
+
+	    	        Integer relatedPostId = relatedPost.getRelatedPostId(); // 새로 생성된 게시물의 relatedPostId 값 가져오기
+
+	    	        log.info("[BoardService] registNewPost 새로 생성된 relatedPostId 가져오나 : " + relatedPostId);
+
+	    	        // 게시물마다 등록될 단어 저장
+	    	        newRelatedPostFrequency.setId(0); // 시퀀스에서 가져온 다음 값 설정
+	                newRelatedPostFrequency.setPostId(postId);
+	                newRelatedPostFrequency.setRelatedPostId(relatedPostId);
+	                newRelatedPostFrequency.setFrequency(count);
+	                
+	    	        RelatedPostFrequency relatedPostFrequency = modelMapper.map(newRelatedPostFrequency, RelatedPostFrequency.class);
+	    	        boardRelatedPostFrequencyRepository.save(relatedPostFrequency);
 	    	        
+	    	        log.info("[BoardService] registNewPost 저장되는 relatedPostFrequency 확인 : " + relatedPostFrequency);
+
 	    	        log.info("[BoardService] registNewPost existingRelatedPost if 문 else End ========= ");
 
 	            }

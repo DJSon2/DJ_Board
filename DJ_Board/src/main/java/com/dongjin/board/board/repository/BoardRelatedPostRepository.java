@@ -10,5 +10,7 @@ public interface BoardRelatedPostRepository extends JpaRepository<RelatedPost, I
 
 	RelatedPost findByWord(String wordsString);
 
+	int findIdByWord(RelatedPost existingRelatedPost);
+
 
 }

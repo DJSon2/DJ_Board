@@ -1,10 +1,6 @@
 package com.dongjin.board.board.controller;
 
-import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.dongjin.board.board.dto.PostDTO;
 import com.dongjin.board.board.dto.RelatedPostDTO;
-import com.dongjin.board.board.entity.Post;
+import com.dongjin.board.board.dto.RelatedPostFrequencyDTO;
 import com.dongjin.board.board.paging.Pagenation;
 import com.dongjin.board.board.paging.SelectCriteria;
 import com.dongjin.board.board.repository.BoardRepository;
@@ -113,11 +109,11 @@ public class BoardController {
 	}
 
 	@PostMapping("/regist")
-	public ModelAndView registPost(ModelAndView mv, PostDTO newPost, RelatedPostDTO newRelatedPost, RedirectAttributes rttr) {
+	public ModelAndView registPost(ModelAndView mv, PostDTO newPost, RelatedPostDTO newRelatedPost, RelatedPostFrequencyDTO newRelatedPostFrequency ,RedirectAttributes rttr) {
 	    log.info("[BoardController] registPost Start ==================");
 
 	    // 게시물 데이터 저장
-	    boardService.registNewPost(newPost, newRelatedPost);
+	    boardService.registNewPost(newPost, newRelatedPost, newRelatedPostFrequency);
 
 	    log.info("[BoardController] registPost END ==================");
 
