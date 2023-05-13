@@ -9,14 +9,22 @@
 	<div class="post">
 	  <h2 th:text="${post.title}"></h2>
 	  
-	  <p>작성일: <span th:text="${post.createdAT}"></span></p>
+	  <p>작성일: <span th:text="${ post.createdAT }"></span></p>
 	  <p>작성자: <span th:text="${ post.authorName }"></span></p>
 	  
 	  <hr>
 	  
-	  <div th:utext="${post.content}"></div>
+	  <div th:utext="${ post.content }"></div>
 	  <hr>
-	  
+	  <h3>관련 게시글</h3>
+	  <div th:each="board : ${ postList }">
+				<hr width= "800px">
+				<div><a class="item1" th:href="'/board/'+${ board.postId }" th:text="${ board.title }"></a></div>
+				<div><a class="item2" th:href="'/board/'+${ board.postId }" th:text="${ board.createdAT }"></a></div>
+				<div>
+					<span class="item3" th:text="${ board.title }"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<span class="item4" th:text="${ board.createdAT }" ></span>&nbsp;&nbsp;&nbsp;&nbsp;
+				<hr width= "800px">
 	  <button onclick="location.href='/board/list'">목록으로 돌아가기</button>
 	</div>
 

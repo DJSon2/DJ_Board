@@ -53,6 +53,8 @@ public class BoardService {
 
 		List<Post> postList = boardRepository.findAll(Sort.by("postId"));
 
+        log.info("[BoardService] findPostByPostId postList1 확인 : " + postList);
+
 		return postList.stream().map(post -> modelMapper.map(post, PostDTO.class)).collect(Collectors.toList());
 	}
 
@@ -247,6 +249,60 @@ public class BoardService {
 		log.info("[BoardService] registNewPost End ==================");
 	}
 
-	
-	
+	/* 연관 게시물 추천 */
+	@Transactional
+	public List<PostDTO> findRelatedPostListById(int postId) {
+		
+		log.info("[BoardService] findPostByPostId Start ==================");
+		
+		// 게시물 상세 페이지에 등록된 단어 컬럼 검색
+		List<RelatedPostFrequency> relatedPostFrequency = boardRelatedPostFrequencyRepository.findByPostId(postId);
+		
+		log.info("[BoardService] findPostByPostId relatedPostFrequency 확인 : " + relatedPostFrequency);
+
+		// 등록된 단어의 relatedPostId를 for문을 통해 추출
+		List<Integer> relatedPostIdList = new ArrayList<>();
+		for (RelatedPostFrequency rpf : relatedPostFrequency) {
+		    relatedPostIdList.add(rpf.getRelatedPostId());
+		}
+		log.info("[BoardService] findPostByPostId relatedPostIdList 확인 : " + relatedPostIdList);
+		
+		// 추출한 Id를 통해 같은 단어를 사용한 게시물 연관테이블에서 검색
+		List<Post> relatedPostList = new ArrayList<>();
+	    for (int relatedPostId : relatedPostIdList) {
+	        List<RelatedPostFrequency> findRelatedPost = boardRelatedPostFrequencyRepository.findPostIdByRelatedPostId(relatedPostId);
+
+	        log.info("[BoardService] findPostByPostId findRelatedPost 확인 : " + findRelatedPost);
+
+	        // 검색한 데이터(findRelatedPost에서 postId만 추출해서, boardRepository에 findById(findRelatedPost)의 형식으로 List 뽑기
+	        List<Integer> postIdList = new ArrayList<>();
+	        for (RelatedPostFrequency rpf : findRelatedPost) {
+	            postIdList.add(rpf.getPostId());
+	        }
+	        List<Post> posts = boardRepository.findAllById(postIdList);
+	        relatedPostList.addAll(posts);
+	        
+	        log.info("[BoardService] findPostByPostId relatedPostList 확인 : " + relatedPostList);
+	        log.info("[BoardService] findPostByPostId posts 확인 : " + posts);
+
+	        
+	    }
+	    
+	    List<Post> postList = relatedPostList;
+        log.info("[BoardService] findPostByPostId postList2 확인 : " + postList);
+
+	    if (postList.isEmpty()) {
+	        log.info("[BoardService] findPostByPostId End ================== (연관된 게시글이 없습니다.)");
+	        return new ArrayList<>();
+	    }
+	    log.info("[BoardService] findPostByPostId End ==================");
+
+	    return postList.stream().map(post -> modelMapper.map(post,PostDTO.class)).collect(Collectors.toList());
+	    }
 }
+
+
+
+	
+	
+

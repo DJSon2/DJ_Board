@@ -94,7 +94,12 @@ public class BoardController {
 		log.info("[BoardController] boardDetail Start ==================");
 
 		PostDTO post = boardService.findPostById(postId);
-//		System.out.println("========================="+post);
+
+		// 연관성 있는 게시묾 추천
+		List<PostDTO> postList = boardService.findRelatedPostListById(postId);
+
+		mv.addObject("postList", postList);
+		
 		mv.addObject("post", post);
 		mv.setViewName("/board/detail");
 //		log.info("[BoardController] boardDetail test : " + post);
@@ -103,21 +108,37 @@ public class BoardController {
 		return mv;
 	}
 
+	/*
+	 * 연관 게시물 추천
+	 * 
+	 * @GetMapping("/related-post") public ModelAndView boardRelatedPost
+	 * (ModelAndView mv, @PathVariable int postId) {
+	 * 
+	 * log.info("[BoardController] boardRelatedPost Start ==================");
+	 * 
+	 * 
+	 * mv.setViewName("/board/related-post");
+	 * 
+	 * log.info("[BoardController] boardRelatedPost End =================="); return
+	 * mv; }
+	 */
+
 	/* 새 게시물 작성 */
 	@GetMapping("/regist")
 	public void registPage() {
 	}
 
 	@PostMapping("/regist")
-	public ModelAndView registPost(ModelAndView mv, PostDTO newPost, RelatedPostDTO newRelatedPost, RelatedPostFrequencyDTO newRelatedPostFrequency ,RedirectAttributes rttr) {
-	    log.info("[BoardController] registPost Start ==================");
+	public ModelAndView registPost(ModelAndView mv, PostDTO newPost, RelatedPostDTO newRelatedPost,
+			RelatedPostFrequencyDTO newRelatedPostFrequency, RedirectAttributes rttr) {
+		log.info("[BoardController] registPost Start ==================");
 
-	    // 게시물 데이터 저장
-	    boardService.registNewPost(newPost, newRelatedPost, newRelatedPostFrequency);
+		// 게시물 데이터 저장
+		boardService.registNewPost(newPost, newRelatedPost, newRelatedPostFrequency);
 
-	    log.info("[BoardController] registPost END ==================");
+		log.info("[BoardController] registPost END ==================");
 
-	    return new ModelAndView("redirect:/");
+		return new ModelAndView("redirect:/");
 	}
 
 }

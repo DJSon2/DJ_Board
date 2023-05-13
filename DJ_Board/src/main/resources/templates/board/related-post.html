@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/detail.css}">
+</head>
+<body>
+
+	<div th:each="board : ${ postList }">
+			<hr width= "800px">
+			<div><a class="item1" th:href="'/board/'+${ board.postId }" th:text="${ board.title }"></a></div>
+			<div>
+				<span class="item3" th:text="${ board.title }"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<hr width= "800px">
+		  	</div>
+		</div>
+	</div>
+	  <button onclick="location.href='/board/list'">목록으로 돌아가기</button>
+	</div>
+
+</body>
