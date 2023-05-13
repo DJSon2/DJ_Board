@@ -1,18 +1,18 @@
 package com.dongjin.board.board.entity;
 
-import java.sql.Clob;
-
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @EntityListeners(AuditingEntityListener.class)
-@Entity(name="Board")
+@Entity(name="RelatedPost")
 @Table(name = "BOARD_RELATED_POST")
 @SequenceGenerator( /// 식별자, 시퀀스전략
         name = "RELATED_POST_SEQ_GENERATOR",
@@ -23,11 +23,15 @@ import jakarta.persistence.Table;
 public class RelatedPost {
 
 	@Id
-	@Column(name = "POST_ID")
-	private int postId;
+	@GeneratedValue(
+			strategy = GenerationType.SEQUENCE,
+			generator = "RELATED_POST_SEQ_GENERATOR"
+			)
+    @Column(name = "RELATED_POST_ID")
+    private int relatedPostId;
 	
-	@Column(name = "RELATED_POST_ID")
-	private int relatedPostId;
+	@Column(name = "POST_ID")
+    private int postId;
 	
 	@Column(name = "FREQUENCY")
 	private int frequency;
@@ -39,26 +43,18 @@ public class RelatedPost {
 		super();
 	}
 
-	public RelatedPost(int postId, int relatedPostId, int frequency, String word) {
+	public RelatedPost(int relatedPostId, int postId, int frequency, String word) {
 		super();
-		this.postId = postId;
 		this.relatedPostId = relatedPostId;
+		this.postId = postId;
 		this.frequency = frequency;
 		this.word = word;
 	}
 
 	@Override
 	public String toString() {
-		return "RelatedPost [postId=" + postId + ", relatedPostId=" + relatedPostId + ", frequency=" + frequency
+		return "RelatedPost [relatedPostId=" + relatedPostId + ", postId=" + postId + ", frequency=" + frequency
 				+ ", word=" + word + "]";
-	}
-
-	public int getPostId() {
-		return postId;
-	}
-
-	public void setPostId(int postId) {
-		this.postId = postId;
 	}
 
 	public int getRelatedPostId() {
@@ -67,6 +63,14 @@ public class RelatedPost {
 
 	public void setRelatedPostId(int relatedPostId) {
 		this.relatedPostId = relatedPostId;
+	}
+
+	public int getPostId() {
+		return postId;
+	}
+
+	public void setPostId(int postId) {
+		this.postId = postId;
 	}
 
 	public int getFrequency() {
@@ -86,5 +90,5 @@ public class RelatedPost {
 	}
 
 	
-	
+
 }

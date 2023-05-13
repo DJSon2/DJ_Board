@@ -1,17 +1,19 @@
 package com.dongjin.board.board.entity;
 
-import java.sql.Clob;
 import java.sql.Date;
-import java.sql.Timestamp;
+import java.util.List;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
@@ -45,7 +47,7 @@ public class Post {
 	
 	@Column(name = "CREATED_AT")
 	private java.sql.Date createdAT;
-
+	
 	public Post() {
 		super();
 	}
@@ -104,8 +106,5 @@ public class Post {
 	public void setCreatedAT(java.sql.Date createdAT) {
 		this.createdAT = createdAT;
 	}
-
-	
-	
 
 }
