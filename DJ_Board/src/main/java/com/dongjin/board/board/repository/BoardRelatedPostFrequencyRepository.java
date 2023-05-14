@@ -13,4 +13,6 @@ public interface BoardRelatedPostFrequencyRepository extends JpaRepository<Relat
 	List<RelatedPostFrequency> findByRelatedPostId(int relatedPostId);
 
 	List<RelatedPostFrequency> findPostIdByRelatedPostId(int relatedPostId);
+
+	List<RelatedPostFrequency> findPostIdByRelatedPostIdOrderByFrequencyDesc(int relatedPostId);
 }

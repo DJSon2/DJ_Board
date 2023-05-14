@@ -2,9 +2,11 @@ package com.dongjin.board.board.service;
 
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -255,7 +257,7 @@ public class BoardService {
 		
 		log.info("[BoardService] findPostByPostId Start ==================");
 		
-		// 게시물 상세 페이지에 등록된 단어 컬럼 검색
+		// 게시물 등록된 단어 컬럼 검색
 		List<RelatedPostFrequency> relatedPostFrequency = boardRelatedPostFrequencyRepository.findByPostId(postId);
 		
 		log.info("[BoardService] findPostByPostId relatedPostFrequency 확인 : " + relatedPostFrequency);
@@ -267,38 +269,57 @@ public class BoardService {
 		}
 		log.info("[BoardService] findPostByPostId relatedPostIdList 확인 : " + relatedPostIdList);
 		
-		// 추출한 Id를 통해 같은 단어를 사용한 게시물 연관테이블에서 검색
-		List<Post> relatedPostList = new ArrayList<>();
-	    for (int relatedPostId : relatedPostIdList) {
-	        List<RelatedPostFrequency> findRelatedPost = boardRelatedPostFrequencyRepository.findPostIdByRelatedPostId(relatedPostId);
+			// 추출한 Id를 통해 같은 단어를 사용한 게시물 연관테이블에서 검색
+			List<Post> relatedPostList = new ArrayList<>();
+		    for (int relatedPostId : relatedPostIdList) {
+		    	
+		    		
+		    	
+		    	// 선택한 게시물의 postId 구하기 
+		        List<RelatedPostFrequency> findRelatedPost = boardRelatedPostFrequencyRepository.findPostIdByRelatedPostId(relatedPostId);
+		       
+		        // 빈도 수 기준으로 정렬된 리스트 구하기
+		        List<RelatedPostFrequency> sortedRelatedPostFrequencyList = findRelatedPost.stream()
+		                .filter(relatedPost -> relatedPost.getPostId() != postId)
+		                .sorted(Comparator.comparingInt(RelatedPostFrequency::getFrequency).reversed())
+		                .collect(Collectors.toList());
+	
+		        log.info("[BoardService] findPostByPostId findRelatedPost 확인 : " + findRelatedPost);
+	
+		        // 검색한 데이터(findRelatedPost에서 postId만 추출해서, boardRepository에 findById(findRelatedPost)의 형식으로 List 뽑기
+		        List<Integer> postIdList = sortedRelatedPostFrequencyList.stream()
+		                .limit(3)
+		                .map(RelatedPostFrequency::getPostId)
+		                .collect(Collectors.toList());
+	
+	
+		        log.info("[BoardService] findPostByPostId postIdList 확인 : " + postIdList);
+		        
+		        // 빈도 수 내림차 순으로 얻은 postId로 게시물 리스트 만들기
+		        // 빈도 수 높은 순서대로 나열하기 위해 List에 담긴 값을 따로 쿼리 메소드 실행
+		        List<Post> relatedPostList1 = new ArrayList<>();
+		        for (int postId1 : postIdList) {
+		            Optional<Post> post = boardRepository.findById(postId1);
+		            post.ifPresent(relatedPostList1::add);
+		        }
+		        relatedPostList.addAll(relatedPostList1);
+		        
+		        log.info("[BoardService] findPostByPostId relatedPostList 확인 : " + relatedPostList1);
+		        
+		    }
+		    // 3개 미만의 연관 게시물만 나오게 설정
+		    List<Post> postList;
+		    if (relatedPostList.size() <= 3) {
+		        postList = relatedPostList;
+		    } else {
+		        postList = relatedPostList.subList(0, 3);
+		    }
 
-	        log.info("[BoardService] findPostByPostId findRelatedPost 확인 : " + findRelatedPost);
-
-	        // 검색한 데이터(findRelatedPost에서 postId만 추출해서, boardRepository에 findById(findRelatedPost)의 형식으로 List 뽑기
-	        List<Integer> postIdList = new ArrayList<>();
-	        for (RelatedPostFrequency rpf : findRelatedPost) {
-	            postIdList.add(rpf.getPostId());
-	        }
-	        List<Post> posts = boardRepository.findAllById(postIdList);
-	        relatedPostList.addAll(posts);
-	        
-	        log.info("[BoardService] findPostByPostId relatedPostList 확인 : " + relatedPostList);
-	        log.info("[BoardService] findPostByPostId posts 확인 : " + posts);
-
-	        
-	    }
-	    
-	    List<Post> postList = relatedPostList;
-        log.info("[BoardService] findPostByPostId postList2 확인 : " + postList);
-
-	    if (postList.isEmpty()) {
-	        log.info("[BoardService] findPostByPostId End ================== (연관된 게시글이 없습니다.)");
-	        return new ArrayList<>();
-	    }
-	    log.info("[BoardService] findPostByPostId End ==================");
-
-	    return postList.stream().map(post -> modelMapper.map(post,PostDTO.class)).collect(Collectors.toList());
-	    }
+		    log.info("[BoardService] findPostByPostId postList2 확인 : " + postList);
+		    log.info("[BoardService] findPostByPostId if End ==================");
+		    return postList.stream().map(post -> modelMapper.map(post,PostDTO.class)).collect(Collectors.toList());
+    }
+	  
 }
 
 
