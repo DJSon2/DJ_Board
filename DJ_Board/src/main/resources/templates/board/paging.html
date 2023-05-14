@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+<head>
+<meta charset="UTF-8">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<title>Insert title here</title>
+<style>
+	.button{
+		
+		cursor:pointer;
+		border:0px;
+		background: white;
+		font-size: 20px;
+	}
+</style>
+</head>
+<body>
+	<div class="pagingArea" align="center">
+	    <button class="button" id="startPage"><<</button>
+
+		 <th:block th:if="${ selectCriteria.pageNo <= 1 }">
+			<button class="button" disabled><</button>
+		</th:block>
+		<th:block th:if="${ selectCriteria.pageNo > 1 }">
+			<button class="button" id="prevPage"><</button>
+		</th:block>
+
+		<th:block th:with="start = ${selectCriteria.startPage},
+                    last = ${selectCriteria.endPage}">
+			<th:block th:each="p : ${#numbers.sequence(start,last)}">
+				<th:block th:if="${ selectCriteria.pageNo eq p }">
+					<button class="button" th:text="${p}" disabled></button>
+				</th:block>
+				<th:block th:if="${ selectCriteria.pageNo ne p }">
+					<button class="button" th:text="${p}" onclick="pageButtonAction(this.innerText);"></button>
+				</th:block>
+		    </th:block>
+	    </th:block> 
+
+	 	<th:block th:if="${ selectCriteria.pageNo >= selectCriteria.maxPage }">
+			<button class="button" disabled>></button>
+		</th:block>
+		<th:block th:if="${ selectCriteria.pageNo < selectCriteria.maxPage }">
+			<button class="button" id="nextPage">></button>
+		</th:block> 
+
+		 <button class="button" id="maxPage">>></button> 
+	</div>
+
+ 	<script>
+		const link = "/board/list";
+		let searchText = "";
+		let searchConditionExist = "[[${ selectCriteria.searchCondition }]]";
+		let searchValueExist = "[[${ selectCriteria.searchValue }]]";
+
+		/* 검색 조건 유무에 따른 경로 처리 */
+		if(searchConditionExist) {
+			searchText += "&searchCondition=" + searchConditionExist;
+		}
+
+		/* 검색 내용 유무에 따른 경로 처리 */
+		if(searchValueExist) {
+			searchText += "&searchValue=" + searchValueExist;
+		}
+
+		/* 첫 페이지 버튼 click 이벤트 처리 */
+		if(document.getElementById("startPage")) {
+			const $startPage = document.getElementById("startPage");
+			$startPage.onclick = function() {
+				location.href = link + "?currentPage=1" + searchText;
+			}
+		}
+
+		/* 이전 페이지 버튼 click 이벤트 처리 */
+		if(document.getElementById("prevPage")) {
+			const $prevPage = document.getElementById("prevPage");
+			$prevPage.onclick = function() {
+				location.href = link + "?currentPage=[[${ selectCriteria.pageNo - 1 }]]" + searchText;
+			}
+		}
+
+		/* 다음 페이지 버튼 click 이벤트 처리 */
+		if(document.getElementById("nextPage")) {
+			const $nextPage = document.getElementById("nextPage");
+			$nextPage.onclick = function() {
+				location.href = link + "?currentPage=[[${ selectCriteria.pageNo + 1 }]]" + searchText;
+			}
+		}
+
+		/* 마지막 페이지 버튼 click 이벤트 처리 */
+		if(document.getElementById("maxPage")) {
+			const $maxPage = document.getElementById("maxPage");
+			$maxPage.onclick = function() {
+				location.href = link + "?currentPage=[[${ selectCriteria.maxPage }]]" + searchText;
+			}
+		}
+
+		/* 페이지 번호 버튼 click 이벤트 처리 */
+		function pageButtonAction(text) {
+			location.href = link + "?currentPage=" + text + searchText;
+		}
+	</script> 
+</body>
+</html>

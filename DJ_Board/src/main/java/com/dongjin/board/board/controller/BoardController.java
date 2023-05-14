@@ -30,14 +30,10 @@ public class BoardController {
 
 	private static final Logger log = LoggerFactory.getLogger(BoardController.class);
 	private final BoardService boardService;
-	private final BoardRepository boardRepository;
-	private final JdbcTemplate jdbcTemplate;
 
 	@Autowired
-	public BoardController(BoardService boardService, BoardRepository boardRepository, JdbcTemplate jdbcTemplate) {
+	public BoardController(BoardService boardService) {
 		this.boardService = boardService;
-		this.boardRepository = boardRepository;
-		this.jdbcTemplate = jdbcTemplate;
 	}
 
 	/* 게시판 전체보기 핸들러 */
@@ -102,26 +98,10 @@ public class BoardController {
 		
 		mv.addObject("post", post);
 		mv.setViewName("/board/detail");
-//		log.info("[BoardController] boardDetail test : " + post);
 
 		log.info("[BoardController] boardDetail End ==================");
 		return mv;
 	}
-
-	/*
-	 * 연관 게시물 추천
-	 * 
-	 * @GetMapping("/related-post") public ModelAndView boardRelatedPost
-	 * (ModelAndView mv, @PathVariable int postId) {
-	 * 
-	 * log.info("[BoardController] boardRelatedPost Start ==================");
-	 * 
-	 * 
-	 * mv.setViewName("/board/related-post");
-	 * 
-	 * log.info("[BoardController] boardRelatedPost End =================="); return
-	 * mv; }
-	 */
 
 	/* 새 게시물 작성 */
 	@GetMapping("/regist")
@@ -140,5 +120,7 @@ public class BoardController {
 
 		return new ModelAndView("redirect:/");
 	}
+	
+	
 
 }

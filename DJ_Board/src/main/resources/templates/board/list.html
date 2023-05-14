@@ -1,22 +1,104 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymleaf.org">
+<head>
+	<style>
+		.board-list {
+		  max-width: 800px;
+		  margin: 0 auto;
+		}
+		
+		.board-list h2 {
+		  text-align: center;
+		  margin-top: 50px;
+		}
+		
+		.board-list button {
+		  margin: 10px;
+		  padding: 10px;
+		  background-color: #007bff;
+		  color: #fff;
+		  border: none;
+		  border-radius: 5px;
+		  cursor: pointer;
+		}
+		
+		.board-list button:hover {
+		  background-color: #0069d9;
+		}
+		
+		.post-list {
+		  margin-top: 50px;
+		}
+		
+		.post-item {
+		  border-bottom: 1px solid #ccc;
+		  padding: 20px;
+		}
+		
+		.post-item:hover {
+		  background-color: #f2f2f2;
+		}
+		
+		.post-title {
+		  font-size: 18px;
+		  font-weight: bold;
+		}
+		
+		.post-title a {
+		  color: #000;
+		  text-decoration: none;
+		}
+		
+		.post-info {
+		  margin-top: 10px;
+		  font-size: 14px;
+		}
+		
+		.post-date {
+		  float: left;
+		}
+		
+		.post-author {
+		  float: right;
+		}
+		
+		.post-author::before {
+		  content: "작성자: ";
+		}
+
+	</style>
+</head>
       
 <body>
 	<script>
 		const successMessage = "[[${ registSuccessMessage }]]";
 		successMessage && alert(successMessage);;
 	</script>
-		<button onclick="location.href='/board/regist'">새로운 게시글 작성하기</button>
-			<div th:each="board : ${ postList }">
-				<hr width= "800px">
-				<div><a class="item1" th:href="'/board/'+${ board.postId }" th:text="${ board.title }"></a></div>
-				<div><a class="item2" th:href="'/board/'+${ board.postId }" th:text="${ board.createdAT }"></a></div>
-				<div>
-					<span class="item3" th:text="${ board.title }"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<span class="item4" th:text="${ board.createdAT }" ></span>&nbsp;&nbsp;&nbsp;&nbsp;
-				<hr width= "800px">
-					</div>
-				</div>
-			</div>
-			<button onclick="location.href='/main'">메인으로 돌아가기</button>
+		<div class="board-list">
+  <h2>게시글 리스트</h2>
+  <button onclick="location.href='/board/regist'">새로운 게시글 작성하기</button>
+  <button onclick="location.href='/main'">메인으로 돌아가기</button>
+
+  <div class="post-list">
+    <div th:each="board : ${ postList }">
+      <div class="post-item">
+        <div class="post-title">
+          <a th:href="'/board/'+${ board.postId }" th:text="${ board.title }"></a>
+        </div>
+        <div class="post-info">
+          <div class="post-date">
+            <span th:text="${ board.createdAT }"></span>
+          </div>
+          <div class="post-author">
+            <span th:text="${ board.authorName }"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div th:replace="board/paging.html"></div>
+</div>
+
+
 </body>

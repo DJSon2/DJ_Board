@@ -3,30 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/detail.css}">
+<style>
+   .post {
+	 margin: 20px auto;
+     max-width: 800px;
+     background-color: #fff;
+     padding: 20px;
+     border-radius: 5px;
+     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+	}
+	
+	.post h2 {
+	  margin: 30px 0;
+	}
+	
+	.post p {
+	  margin: 10px 0;
+	}
+	
+	#relatedPost {
+	  margin-top: 50px;
+	  padding: 20px;
+	  border: 1px solid #ccc;
+	}
+	
+	.item1 {
+	  font-size: 18px;
+	  font-weight: bold;
+	  color: #555;
+	}
+	
+	.item2 {
+	  font-size: 14px;
+	  font-weight: normal;
+	  color: #777;
+	}
+	
+	.item3 {
+	  font-size: 16px;
+	  font-weight: bold;
+	  color: #333;
+	}
+	
+	.item4 {
+	  font-size: 14px;
+	  font-weight: normal;
+	  color: #555;
+	}
+	
+	hr {
+	  margin-top: 50px;
+	  margin-bottom: 50px;
+	  border: 0;
+	  border-top: 1px solid #ccc;
+	}
+
+</style>
 </head>
 <body>
-	<div class="post">
-	  <h2 th:text="${post.title}"></h2>
-	  
-	  <p>작성일: <span th:text="${ post.createdAT }"></span></p>
-	  <p>작성자: <span th:text="${ post.authorName }"></span></p>
+	  <button onclick="location.href='/board/list'">목록으로 돌아가기</button>
+	  <div class="post">
+		  <h2 th:text="${post.title}"></h2>
+		  
+		  <p>작성일: <span th:text="${ post.createdAT }"></span></p>
+		  <p>작성자: <span th:text="${ post.authorName }"></span></p>
+		  
+		  <hr>
+		  
+		  <div th:utext="${ post.content }"></div>
+	  </div>
 	  
 	  <hr>
 	  
-	  <div th:utext="${ post.content }"></div>
-	  <hr>
-	  <h3>관련 게시글</h3>
-	  <div th:each="board : ${ postList }">
-				<hr width= "800px">
-				<div><a class="item1" th:href="'/board/'+${ board.postId }" th:text="${ board.title }"></a></div>
-				<div><a class="item2" th:href="'/board/'+${ board.postId }" th:text="${ board.createdAT }"></a></div>
-				<div>
-					<span class="item3" th:text="${ board.title }"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<span class="item4" th:text="${ board.createdAT }" ></span>&nbsp;&nbsp;&nbsp;&nbsp;
-				<hr width= "800px">
+	  <div id="relatedPost">
+	  	<h3>관련 게시글</h3>
+		  <div th:each="board : ${ postList }">
+					<hr width= "800px">
+					<div><a class="item1" th:href="'/board/'+${ board.postId }" th:text="${ board.title }"></a></div>
+					<div><a class="item2" th:href="'/board/'+${ board.postId }" th:text="${ board.createdAT }"></a></div>
+					<div>
+						<span class="item3" th:text="${ board.title }"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<span class="item4" th:text="${ board.createdAT }" ></span>&nbsp;&nbsp;&nbsp;&nbsp;
+					<hr width= "800px">
+			</div>	
 		</div>
 	</div>
-	  <button onclick="location.href='/board/list'">목록으로 돌아가기</button>
 
 </body>

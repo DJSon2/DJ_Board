@@ -159,8 +159,6 @@ public class BoardService {
 	    	
 	        log.info("[BoardService] registNewPost 새로 등록되는 단어 확인 : " + word);
 
-//	        log.info("[BoardService] registNewPost frequentWords : " + frequentWords);
-	        
 	        double frequency = (double) count / (double) totalCount;
 	        
 	        log.info("[BoardService] registNewPost frequency : " + frequency);
@@ -169,10 +167,6 @@ public class BoardService {
 	        // 빈도 수 60% 이하 단어만 포함
 	        if (frequency < 0.6) {
 	        	
-	        	// 등록하려는 단어가 이전에 등록되었는지 검색
-	        	// List<String>을 String 형으로 변경
-//	        	String WordsString = String.join(",", frequentWords);
-	           
     	        log.info("[BoardService] registNewPost word 확인 : " + word);
   	
     	        // 중복 확인용
