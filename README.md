@@ -1,2 +1,27 @@
-# lms-board
-LMS 웹 사이트 강의 관련 게시판 개발
+# 개발환경
+* 언어 : Java(Spring Framework)
+* DB : OracleDB
+* IDE : Spring Tool 4
+
+# DB 구조
+BOARD_POST
+ - POST_ID(PK)
+ - TITLE
+ - CONTENT
+ - CREATED_AT
+ - AUTHOR_NAME
+
+BOARD_RELATED_POST
+  - RELATED_POST_ID(PK)
+  - WORD
+ 
+BOARD_RELATED_POST_FREQUENCY
+  - ID
+  - RELATED_POST_ID(FK)
+  - POST_ID(FK)
+  - FREQUENCY
+
+## 시퀀스
+- SEQ_ID
+- SEQ_POST_ID
+- SEQ_RELATED_POST_ID
